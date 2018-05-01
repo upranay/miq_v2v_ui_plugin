@@ -10,7 +10,7 @@ const OverviewEmptyState = ({
   iconType,
   iconName
 }) => (
-  <EmptyState>
+  <EmptyState className="overview">
     <EmptyState.Icon type={iconType} name={iconName} />
     <EmptyState.Title>{title}</EmptyState.Title>
     <EmptyState.Info>{description}</EmptyState.Info>
