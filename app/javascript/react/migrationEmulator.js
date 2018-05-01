@@ -11,9 +11,10 @@ import {
 class MigrationEmulator {
   constructor() {
     this.interval = null;
-    this.PEND_TIME = 11; // time to stay in pending (seconds)
+    this.PEND_TIME = 10; // time to stay in pending (seconds)
     this.EMULATION_INTERVAL = 3000; // interval to make updates (ms)
-    this.DISK_INCREMENT_MAX = 10; // max disk increment percentage
+    this.DISK_INCREMENT_MIN = 5000000000; // min disk increment (5 gb/interval)
+    this.DISK_INCREMENT_MAX = 10000000000; // max disk increment (10 gb/interval)
   }
   run() {
     if (!this.interval) {
@@ -80,13 +81,22 @@ class MigrationEmulator {
         task.updated_on = new Date().toISOString();
         // todo: set these based on mapped cluster (gather from plan's mapping)
         // hard code to disk store size in mocks for now
-        if (i === 1) {
-          task.options.virtv2v_disks = [
-            { percent: 0, size: 532478427136 },
-            { percent: 0, size: 83098599424 }
-          ];
+        if (i === 0) {
+          task.options.virtv2v_disks = [{ percent: 0, size: 266000026560 }];
+        } else if (i === 1) {
+          task.options.virtv2v_disks = [{ percent: 0, size: 266480000000 }];
         } else if (i === 2) {
-          task.options.virtv2v_disks = [{ percent: 0, size: 532478427136 }];
+          task.options.virtv2v_disks = [{ percent: 0, size: 83100000000 }];
+        } else if (i === 3) {
+          task.options.virtv2v_disks = [{ percent: 0, size: 276480000000 }];
+        } else if (i === 4) {
+          task.options.virtv2v_disks = [{ percent: 0, size: 64000000000 }];
+        } else if (i === 5) {
+          task.options.virtv2v_disks = [{ percent: 0, size: 64000000000 }];
+        } else if (i === 6) {
+          task.options.virtv2v_disks = [{ percent: 0, size: 64000000000 }];
+        } else if (i === 7) {
+          task.options.virtv2v_disks = [{ percent: 0, size: 64000000000 }];
         } else {
           task.options.virtv2v_disks = [{ percent: 0, size: 532478427136 }];
         }
@@ -107,9 +117,18 @@ class MigrationEmulator {
       task.updated_on = new Date().toISOString();
       task.options.virtv2v_disks.forEach(disk => {
         // randomly increment disk migration
-        const increment = Math.floor(Math.random() * this.DISK_INCREMENT_MAX);
-        disk.percent =
-          disk.percent + increment > 100 ? 100 : disk.percent + increment;
+        const increment =
+          Math.floor(
+            Math.random() *
+              (this.DISK_INCREMENT_MAX - this.DISK_INCREMENT_MIN + 1)
+          ) + this.DISK_INCREMENT_MIN;
+        const space_migrated =
+          Math.ceil(disk.percent / 100 * disk.size) + increment;
+        if (space_migrated >= disk.size) {
+          disk.percent = 100;
+        } else {
+          disk.percent = Math.floor(space_migrated / disk.size * 100);
+        }
       });
 
       const anyDisksIncomplete = task.options.virtv2v_disks.some(
