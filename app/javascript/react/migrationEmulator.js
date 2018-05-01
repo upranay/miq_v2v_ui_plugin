@@ -1,6 +1,7 @@
 import moment from 'moment';
 import {
   getLocalStorageState,
+  getLocalStorageNumericState,
   saveLocalStorageState,
   LOCAL_STORAGE_KEYS
 } from '../common/LocalStorage';
@@ -11,10 +12,19 @@ import {
 class MigrationEmulator {
   constructor() {
     this.interval = null;
-    this.PEND_TIME = 10; // time to stay in pending (seconds)
-    this.EMULATION_INTERVAL = 3000; // interval to make updates (ms)
-    this.DISK_INCREMENT_MIN = 5000000000; // min disk increment (5 gb/interval)
-    this.DISK_INCREMENT_MAX = 10000000000; // max disk increment (10 gb/interval)
+    this.PEND_TIME = getLocalStorageNumericState('V2V_PEND_TIME', 10); // time to stay in pending (seconds)
+    this.EMULATION_INTERVAL = getLocalStorageNumericState(
+      'V2V_EMULATION_INTERVAL',
+      3000
+    ); // interval to make updates (ms)
+    this.DISK_INCREMENT_MIN = getLocalStorageNumericState(
+      'V2V_DISK_INCREMENT_MIN',
+      5000000000
+    ); // min disk increment (5 gb/interval)
+    this.DISK_INCREMENT_MAX = getLocalStorageNumericState(
+      'V2V_DISK_INCREMENT_MAX',
+      10000000000
+    ); // max disk increment (10 gb/interval)
   }
   run() {
     if (!this.interval) {

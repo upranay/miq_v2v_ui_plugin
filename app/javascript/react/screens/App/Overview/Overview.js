@@ -7,6 +7,10 @@ import {
   CardGrid,
   Spinner
 } from 'patternfly-react';
+import {
+  getLocalStorageNumericState,
+  LOCAL_STORAGE_KEYS
+} from '../../../../common/LocalStorage';
 import Toolbar from '../../../config/Toolbar';
 import * as AggregateCards from './components/AggregateCards';
 import InfrastructureMappingsList from './components/InfrastructureMappingsList/InfrastructureMappingsList';
@@ -148,7 +152,7 @@ class Overview extends React.Component {
     } = this.props;
     this.pollingInterval = setInterval(() => {
       fetchTransformationPlansAction(fetchTransformationPlansUrl);
-    }, 3000);
+    }, getLocalStorageNumericState(LOCAL_STORAGE_KEYS.V2V_UI_POLL_INTERVAL, 3000));
   }
 
   stopPolling() {

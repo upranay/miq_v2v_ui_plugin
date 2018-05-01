@@ -3,6 +3,11 @@ import PropTypes from 'prop-types';
 import Immutable from 'seamless-immutable';
 import { Link } from 'react-router-dom';
 import { bindMethods, Breadcrumb, Spinner } from 'patternfly-react';
+import {
+  getLocalStorageNumericState,
+  LOCAL_STORAGE_KEYS
+} from '../../../../common/LocalStorage';
+
 import Toolbar from '../../../config/Toolbar';
 import PlanRequestDetailList from './components/PlanRequestDetailList/PlanRequestDetailList';
 import PlanVmsList from './components/PlanVmsList';
@@ -93,7 +98,7 @@ class Plan extends React.Component {
     const { fetchPlanRequestAction, fetchPlanRequestUrlBuilder } = this.props;
     this.pollingInterval = setInterval(() => {
       fetchPlanRequestAction(fetchPlanRequestUrlBuilder, id, planId);
-    }, 3000);
+    }, getLocalStorageNumericState(LOCAL_STORAGE_KEYS.V2V_UI_POLL_INTERVAL, 3000));
   }
 
   stopPolling() {

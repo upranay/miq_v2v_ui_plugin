@@ -10,6 +10,17 @@ export const getLocalStorageState = key => {
   }
 };
 
+export const getLocalStorageNumericState = (key, defaultValue) => {
+  const value = getLocalStorageState(key);
+  if (!isNaN(value)) {
+    return parseInt(value, 10);
+  } else if (defaultValue) {
+    saveLocalStorageState(key, defaultValue);
+    return defaultValue;
+  }
+  return undefined;
+};
+
 export const saveLocalStorageState = (key, value) => {
   try {
     const serializedState = JSON.stringify(value);
@@ -21,5 +32,6 @@ export const saveLocalStorageState = (key, value) => {
 
 export const LOCAL_STORAGE_KEYS = {
   V2V_TRANSFORMATION_MAPPINGS: 'V2V_TRANSFORMATION_MAPPINGS',
-  V2V_PLANS: 'V2V_PLANS'
+  V2V_PLANS: 'V2V_PLANS',
+  V2V_UI_POLL_INTERVAL: 'V2V_UI_POLL_INTERVAL'
 };
